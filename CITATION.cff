@@ -1,0 +1,59 @@
+# ============================================================
+# CITATION.cff (How to cite this project)
+# ============================================================
+
+# REQ.UNIVERSAL: Professional open projects SHOULD include CITATION.cff.
+# WHY: Support correct citation and attribution.
+# ALT: Internal or private repositories may omit citation metadata.
+# CUSTOM: Update author, repository, license, and keyword fields as needed.
+# USAGE: See https://citation-file-format.github.io/ for details.
+
+cff-version: "1.2.0"
+version: "0.1.0"
+type: software
+
+title: Signin Sheet Builder - A Python Package for Generating Printable Sign-In Sheets
+date-released: "2026-03-12"
+
+authors:
+  - family-names: Case
+    given-names: Denise M.
+    orcid: "https://orcid.org/0000-0001-6165-7389"
+    affiliation: "Northwest Missouri State University, USA"
+
+repository-code: "https://github.com/denisecase/signin-sheet-builder"
+url: "https://github.com/denisecase/signin-sheet-builder"
+license: MIT
+
+abstract: |
+  Signin Sheet Builder is a Python tool for transforming
+  tabular registration or membership data into printable
+  sign-in sheet layouts. The tool reads CSV files, expands
+  each record into a two-row check-in format, optionally
+  splits output into alphabetical groups, and can generate
+  formatted Excel sheets suitable for printing.
+
+keywords:
+  - sign-in sheets
+  - event check-in
+  - registration lists
+  - membership management
+  - csv processing
+  - data transformation
+  - spreadsheet automation
+  - civic technology
+  - python
+  - command line tools
+
+preferred-citation:
+  type: software
+  authors:
+    - family-names: Case
+      given-names: Denise M.
+      orcid: "https://orcid.org/0000-0001-6165-7389"
+  title: Signin Sheet Builder
+  version: "0.1.0"
+  date-released: "2026-03-12"
+  url: "https://github.com/denisecase/signin-sheet-builder"
+
+message: "If you use this software, please cite it as described in this file."

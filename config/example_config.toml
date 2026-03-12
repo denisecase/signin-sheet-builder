@@ -1,0 +1,36 @@
+split_ranges = [
+  "A-F",
+  "G-L",
+  "M-R",
+  "S-Z",
+]
+
+output_headers = [
+  "Last-Address",
+  "First-City",
+  "Area-Zip",
+  "Group-Phone",
+  "Role-PhoneType",
+  "Signature-OKEdits",
+]
+
+row1_fields = [
+  "Last Name",
+  "First Name",
+  "Area",
+  "Group",
+  "Role",
+  "",
+]
+
+row2_fields = [
+  "Address",
+  "City",
+  "Zip",
+  "Phone Number",
+  "Type of Number",
+  "",
+]
+
+add_spacer_row = false
+sort_field = "Last Name"
