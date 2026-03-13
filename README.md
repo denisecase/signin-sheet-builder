@@ -147,7 +147,7 @@ cd signin-sheet-builder
 code .
 ```
 
-# Environment Setup
+## Step 1. Set Up the Project Environment Setup
 
 In a VS Code terminal:
 
@@ -161,19 +161,36 @@ git add -A
 uvx pre-commit run --all-files
 ```
 
-# Run the Tool
+## Step 2. Customize the Data
 
-Generate sign-in sheets from a source CSV:
+Place your private data and configuration locally:
 
-```shell
-uv run signin-sheet --input data/members.csv --config config/config.toml
+```
+data/members.csv
+config/config.toml
 ```
 
-Convert the generated CSV files into formatted Excel sheets:
+## Step 3. Run the Tool (On Windows)
+
+Generate sign-in sheets from a source CSV file.
+Run the full pipeline. This command performs all steps:
+
+1. generate sign-in CSV files
+2. format Excel versions
+3. export PDFs for printing
 
 ```shell
-uv run python -m signin_sheet_builder.pretty
+uv run signin-create-all
 ```
+
+Or run each step in order:
+
+```shell
+uv run signin-create-csv
+uv run signin-create-xlsx
+uv run signin-create-pdf
+```
+
 
 # Development Commands
 
@@ -189,8 +206,7 @@ git push -u origin main
 
 # Notes
 
-- Keep real data files out of Git.
-- Store local data in `data/`.
-- Store generated outputs in `artifacts/`.
-- Prefer CSV for portability and application independence.
-- Excel generation is optional and depends on the installed library.
+- Keep real data out of Git.
+- Local data in `data/`.
+- Generated outputs in `artifacts/`.
+- Excel and PDF generation are optional; depend on operating system and installed libraries.

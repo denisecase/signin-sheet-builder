@@ -29,6 +29,7 @@ dependencies = [
     # REQ.DEPS: External packages used by the project code.
     "datafun-toolkit",
     "openpyxl",
+    "pywin32; platform_system == 'Windows'",
 ]
 
 [project.optional-dependencies]
@@ -45,7 +46,10 @@ docs = [
 ]
 
 [project.scripts]
-signin-sheet = "signin_sheet_builder.cli:main"
+signin-create-csv = "signin_sheet_builder.cli:main"
+signin-create-xlsx = "signin_sheet_builder.stage_02_to_xlsx:main"
+signin-create-pdf = "signin_sheet_builder.stage_03_to_pdf:main"
+signin-create-all = "signin_sheet_builder.stage_00_run_all:main"
 
 # === RUFF (PYTHON FORMATTING AND LINTING) ===
 

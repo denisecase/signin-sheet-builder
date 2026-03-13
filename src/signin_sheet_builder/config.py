@@ -39,6 +39,25 @@ REQUIRED_KEYS: tuple[str, ...] = (
 # === PUBLIC FUNCTIONS ===
 
 
+def get_title_prefix(config: ConfigMap) -> str:
+    """Get the printable title prefix from config."""
+
+    value: object = config.get("title_prefix", "Members Signin")
+
+    if not isinstance(value, str):
+        msg = "Config error: title_prefix must be a string."
+        LOG.error(msg)
+        raise ValueError(msg)
+
+    title_prefix: str = value.strip()
+    if not title_prefix:
+        msg = "Config error: title_prefix must not be empty."
+        LOG.error(msg)
+        raise ValueError(msg)
+
+    return title_prefix
+
+
 def load_config(config_path: Path) -> ConfigDict:
     """Load config from TOML or JSON and validate required structure."""
 
@@ -109,6 +128,12 @@ def validate_config_dict(config: ConfigMap) -> None:
 
     for key in REQUIRED_KEYS:
         _require_string_list(config, key)
+
+    title_prefix: object = config.get("title_prefix", "Members Signin")
+    if not isinstance(title_prefix, str) or not title_prefix.strip():
+        msg = "Config error: title_prefix must be a non-empty string."
+        LOG.error(msg)
+        raise ValueError(msg)
 
     output_headers: list[str] = _require_string_list(config, "output_headers")
     row1_fields: list[str] = _require_string_list(config, "row1_fields")

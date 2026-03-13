@@ -1,7 +1,7 @@
 # ============================================================
 # cli.py
 # ============================================================
-# Command-line interface for the signin-sheet-builder tool.
+# Command-line interface for the CSV generation step.
 # ============================================================
 
 # === IMPORTS ===
@@ -33,7 +33,7 @@ CONFIG_DIR: Final[Path] = ROOT_DIR / "config"
 
 
 def main() -> None:
-    """Run the sign-in sheet transformation pipeline."""
+    """Run the CSV generation step for sign-in sheets."""
 
     log_header(LOG, "SIGNIN")
 
@@ -47,8 +47,8 @@ def main() -> None:
     log_path(LOG, "CONFIG_DIR", CONFIG_DIR)
 
     parser = argparse.ArgumentParser(
-        prog="signin-sheet",
-        description="Convert a CSV file into split sign-in sheet CSV files.",
+        prog="signin-create-csv",
+        description="Generate split sign-in sheet CSV files from an input CSV file.",
     )
 
     parser.add_argument(
@@ -86,10 +86,10 @@ def main() -> None:
             artifacts_dir=ARTIFACTS_DIR,
         )
 
-        LOG.info("Pipeline executed successfully.")
+        LOG.info("CSV generation step executed successfully.")
 
     except Exception as exc:
-        LOG.exception(f"Pipeline failed: {exc}")
+        LOG.exception(f"CSV generation step failed: {exc}")
         sys.exit(1)
 
     LOG.info("========================")

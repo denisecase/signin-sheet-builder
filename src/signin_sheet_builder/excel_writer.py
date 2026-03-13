@@ -48,6 +48,17 @@ HEADER_FILL: Final[PatternFill] = PatternFill(
 
 HEADER_FONT: Final[Font] = Font(bold=True)
 
+# === PRINT CONSTANTS ===
+
+LETTER_PAPER_SIZE: Final[int] = 1
+
+DEFAULT_LEFT_MARGIN: Final[float] = 0.25
+DEFAULT_RIGHT_MARGIN: Final[float] = 0.25
+DEFAULT_TOP_MARGIN: Final[float] = 1.0
+DEFAULT_BOTTOM_MARGIN: Final[float] = 0.75
+DEFAULT_HEADER_MARGIN: Final[float] = 0.3
+DEFAULT_FOOTER_MARGIN: Final[float] = 0.3
+
 
 # === PUBLIC FUNCTIONS ===
 
@@ -56,6 +67,7 @@ def convert_csv_to_formatted_xlsx(
     csv_path: Path,
     xlsx_path: Path | None = None,
     *,
+    title_prefix: str = "Members Signin",
     landscape: bool = True,
     repeat_header_row: bool = True,
     autofit_min_width: int = 10,
@@ -88,12 +100,18 @@ def convert_csv_to_formatted_xlsx(
     worksheet.title = safe_sheet_title(csv_path.stem)
 
     write_rows_to_worksheet(worksheet, rows)
+    header_text: str = build_header_text(
+        csv_path,
+        title_prefix=title_prefix,
+    )
+
     format_worksheet(
         worksheet,
         landscape=landscape,
         repeat_header_row=repeat_header_row,
         autofit_min_width=autofit_min_width,
         autofit_max_width=autofit_max_width,
+        header_text=header_text,
     )
 
     xlsx_path.parent.mkdir(parents=True, exist_ok=True)
@@ -112,6 +130,7 @@ def convert_csv_folder_to_xlsx(
     *,
     pattern: str = "*.csv",
     output_dir: Path | None = None,
+    title_prefix: str = "Members Signin",
 ) -> list[Path]:
     """Convert all matching CSV files in a folder to formatted XLSX files."""
 
@@ -146,6 +165,7 @@ def convert_csv_folder_to_xlsx(
         written_path: Path = convert_csv_to_formatted_xlsx(
             csv_path=csv_path,
             xlsx_path=xlsx_path,
+            title_prefix=title_prefix,
         )
         written_paths.append(written_path)
 
@@ -183,6 +203,7 @@ def format_worksheet(
     repeat_header_row: bool,
     autofit_min_width: int,
     autofit_max_width: int,
+    header_text: str,
 ) -> None:
     """Apply print and style formatting to the worksheet."""
 
@@ -212,6 +233,7 @@ def format_worksheet(
         worksheet,
         landscape=landscape,
         repeat_header_row=repeat_header_row,
+        header_text=header_text,
     )
 
     LOG.info("Applied worksheet formatting successfully.")
@@ -349,11 +371,120 @@ def set_column_widths(
     LOG.info("========================")
 
 
+def set_print_area_to_used_range(worksheet: Worksheet) -> None:
+    """Set the worksheet print area to the used cell range."""
+
+    LOG.info("========================")
+    LOG.info("START set_print_area_to_used_range()")
+    LOG.info("========================")
+
+    if worksheet.max_row < 1 or worksheet.max_column < 1:
+        LOG.info("Worksheet is empty. Print area not set.")
+        LOG.info("========================")
+        LOG.info("END set_print_area_to_used_range()")
+        LOG.info("========================")
+        return
+
+    bottom_right: str = f"{get_column_letter(worksheet.max_column)}{worksheet.max_row}"
+    worksheet.print_area = f"A1:{bottom_right}"
+
+    LOG.info(f"Set print area to A1:{bottom_right}.")
+    LOG.info("========================")
+    LOG.info("END set_print_area_to_used_range()")
+    LOG.info("========================")
+
+
+def set_page_margins(worksheet: Worksheet) -> None:
+    """Apply page margins for printing."""
+
+    LOG.info("========================")
+    LOG.info("START set_page_margins()")
+    LOG.info("========================")
+
+    worksheet.page_margins.left = DEFAULT_LEFT_MARGIN
+    worksheet.page_margins.right = DEFAULT_RIGHT_MARGIN
+    worksheet.page_margins.top = DEFAULT_TOP_MARGIN
+    worksheet.page_margins.bottom = DEFAULT_BOTTOM_MARGIN
+    worksheet.page_margins.header = DEFAULT_HEADER_MARGIN
+    worksheet.page_margins.footer = DEFAULT_FOOTER_MARGIN
+
+    LOG.info("Set page margins.")
+    LOG.info("========================")
+    LOG.info("END set_page_margins()")
+    LOG.info("========================")
+
+
+def set_page_centering(worksheet: Worksheet) -> None:
+    """Center the worksheet horizontally on the page."""
+
+    LOG.info("========================")
+    LOG.info("START set_page_centering()")
+    LOG.info("========================")
+
+    worksheet.print_options.horizontalCentered = True
+    worksheet.print_options.verticalCentered = False
+
+    LOG.info("Set page centering options.")
+    LOG.info("========================")
+    LOG.info("END set_page_centering()")
+    LOG.info("========================")
+
+
+def set_header_footer_text(worksheet: Worksheet, *, header_text: str) -> None:
+    """Set custom header and footer text for printing."""
+
+    LOG.info("========================")
+    LOG.info("START set_header_footer_text()")
+    LOG.info("========================")
+
+    worksheet.oddHeader.center.text = header_text
+    worksheet.oddFooter.right.text = "Page &[Page] of &[Pages]"
+
+    LOG.info("Set header and footer text.")
+    LOG.info("========================")
+    LOG.info("END set_header_footer_text()")
+    LOG.info("========================")
+
+
+def build_header_text(
+    csv_path: Path,
+    *,
+    title_prefix: str,
+) -> str:
+    """Build the printable header text from the CSV filename."""
+
+    LOG.info("========================")
+    LOG.info("START build_header_text()")
+    LOG.info("========================")
+
+    stem: str = csv_path.stem
+    label: str = extract_split_label_from_stem(stem)
+    header_text: str = f"{title_prefix} - Last Name {label}"
+
+    LOG.info(f"Built header text: {header_text}")
+    LOG.info("========================")
+    LOG.info("END build_header_text()")
+    LOG.info("========================")
+
+    return header_text
+
+
+def extract_split_label_from_stem(stem: str) -> str:
+    """Extract the final split label from a generated filename stem."""
+
+    parts: list[str] = stem.split("_")
+    if parts:
+        return parts[-1]
+
+    return stem
+
+
 def set_print_options(
     worksheet: Worksheet,
     *,
     landscape: bool,
     repeat_header_row: bool,
+    header_text: str,
 ) -> None:
     """Apply print options to the worksheet."""
 
@@ -364,15 +495,15 @@ def set_print_options(
     if landscape:
         worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
 
-    worksheet.page_setup.paperSize = 1
+    worksheet.page_setup.paperSize = LETTER_PAPER_SIZE
 
     if repeat_header_row:
         worksheet.print_title_rows = "1:1"
 
-    worksheet.page_margins.left = 0.25
-    worksheet.page_margins.right = 0.25
-    worksheet.page_margins.top = 0.5
-    worksheet.page_margins.bottom = 0.5
+    set_print_area_to_used_range(worksheet)
+    set_page_margins(worksheet)
+    set_page_centering(worksheet)
+    set_header_footer_text(worksheet, header_text=header_text)
 
     worksheet.sheet_view.showGridLines = True
 
